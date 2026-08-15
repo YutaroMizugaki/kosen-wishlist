@@ -8,7 +8,7 @@ export async function getPublicRequests(): Promise<BookRequest[]> {
 
   const { data, error } = await client
     .from("book_requests")
-    .select("id,title,author,isbn,book_url,price,reason,department,grade,category,status,created_at")
+    .select("id,title,author,isbn,book_url,price,department,grade,category,status,created_at")
     .in("status", ["approved", "fulfilled"])
     .order("created_at", { ascending: false });
 

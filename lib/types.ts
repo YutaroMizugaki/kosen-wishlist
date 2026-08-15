@@ -7,7 +7,6 @@ export type BookRequest = {
   isbn: string | null;
   book_url: string;
   price: number;
-  reason: string;
   department: string;
   grade: string;
   category: string;

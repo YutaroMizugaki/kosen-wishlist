@@ -45,7 +45,6 @@ nav a:hover, nav a:focus { text-decoration: underline; }
 .status.pending { border-color: #c8ae73; color: #795d20; }
 .card-content h3 { margin: 8px 0 0; font-size: 18px; }
 .author { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
-.reason { margin: 12px 0; color: #3f4b44; font-size: 14px; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .card-footer strong { font-size: 15px; }
 .card-footer a { color: var(--green); font-size: 13px; font-weight: 700; }
@@ -56,6 +55,13 @@ nav a:hover, nav a:focus { text-decoration: underline; }
 .site-footer { padding-block: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
 .footer-inner { display: grid; gap: 6px; }
 .footer-inner p { margin: 0; }
+.policy-page { padding-block: 42px 64px; }
+.policy-page h1 { margin: 0; font-size: 30px; }
+.policy-updated { margin: 5px 0 30px; color: var(--muted); font-size: 12px; }
+.policy-page section { max-width: 720px; padding-block: 18px; border-top: 1px solid var(--line); }
+.policy-page h2 { margin: 0 0 7px; font-size: 17px; }
+.policy-page section p { margin: 0; color: #465149; font-size: 14px; }
+.policy-page section p + p { margin-top: 8px; }
 
 .subpage { padding-bottom: 60px; }
 .page-intro { padding-block: 42px 24px; }
@@ -69,6 +75,17 @@ nav a:hover, nav a:focus { text-decoration: underline; }
 .form-section-title h2 { margin: 0; font-size: 18px; }
 .form-section-title p { margin: 1px 0 0; color: var(--muted); font-size: 11px; }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.isbn-lookup { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.lookup-button { min-width: 150px; }
+.lookup-button:disabled { opacity: .6; cursor: wait; }
+.lookup-message { margin: 10px 0 0; color: var(--green); font-size: 12px; }
+.lookup-message.error { color: #8c3026; }
+.lookup-message.existing { padding: 10px; border: 1px solid #c8d3cd; background: var(--pale); }
+.existing-request { margin-top: 14px; padding: 16px; border: 1px solid var(--line); }
+.existing-request h3 { margin: 8px 0 2px; font-size: 17px; }
+.existing-request p { margin: 2px 0; color: var(--muted); font-size: 12px; }
+.existing-request a { display: inline-block; margin-top: 8px; color: var(--green); font-size: 12px; font-weight: 700; }
+.book-fields { margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--line); }
 .field.full { grid-column: 1 / -1; }
 .field { display: grid; gap: 5px; font-size: 13px; font-weight: 600; }
 .field em { margin-left: 3px; color: var(--green); font-size: 10px; font-style: normal; }
@@ -92,6 +109,8 @@ nav a:hover, nav a:focus { text-decoration: underline; }
 .admin-bar { min-height: 52px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #252c33; color: #fff; }
 .admin-bar strong { font-size: 13px; letter-spacing: .03em; }
 .admin-bar a { color: #d8dde1; font-size: 12px; }
+.admin-bar-actions { display: flex; align-items: center; gap: 16px; }
+.admin-bar-actions button { padding: 0; border: 0; background: transparent; color: #d8dde1; font-size: 12px; text-decoration: underline; cursor: pointer; }
 .admin-container { width: min(1080px, calc(100% - 32px)); margin-inline: auto; }
 .admin-login { min-height: calc(100vh - 52px); display: grid; place-items: center; padding: 30px 16px; }
 .login-card { width: min(390px, 100%); padding: 30px; border: 1px solid #d4d8dc; border-radius: 4px; background: #fff; }
@@ -128,6 +147,8 @@ nav a:hover, nav a:focus { text-decoration: underline; }
   .card-topline, .card-footer { align-items: flex-start; }
   .form-layout { grid-template-columns: 1fr; }
   .field-grid { grid-template-columns: 1fr; }
+  .isbn-lookup { grid-template-columns: 1fr; }
+  .lookup-button { width: 100%; }
   .field.full { grid-column: auto; }
   .form-aside { grid-row: 1; }
   .admin-bar { padding-inline: 16px; }
