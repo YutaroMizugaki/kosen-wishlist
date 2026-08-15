@@ -29,7 +29,7 @@ npm run dev
 ## Supabaseの設定
 
 1. Supabaseで新しいプロジェクトを作成します。
-2. SQL Editorで `supabase/schema.sql` を実行します。
+2. SQL Editorで `supabase/schema.sql` を実行します。既存プロジェクトでは、再実行すると公開キーから連絡先メールを読めなくなります。
 3. `.env.example` を `.env.local` にコピーし、Project Settings > API の値を設定します。
 4. `ADMIN_ACCESS_KEY` を長いランダムな値に変更します。
 5. 開発サーバーを再起動します。
@@ -43,7 +43,7 @@ npm run dev
 | `/` | 投稿済み希望図書の公開一覧 |
 | `/request` | 学生向け申請フォーム |
 | `/admin` | 運営者向け管理画面 |
-| `POST /api/requests` | 申請を `approved` で保存し、そのまま公開 |
+| `POST /api/requests` | 申請を `approved` で保存し、そのまま公開。ISBNはISBN-13に統一 |
 | `GET /api/admin` | 管理キーで全申請を取得 |
 | `PATCH /api/admin` | 申請状態を更新 |
 

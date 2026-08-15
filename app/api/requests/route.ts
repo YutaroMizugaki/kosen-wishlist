@@ -1,5 +1,6 @@
 import { createAdminClient, isDemoMode } from "../../../lib/supabase";
 import { addDemoRequest } from "../../../lib/demo-store";
+import { InvalidIsbnError, toIsbn13 } from "../../../lib/isbn";
 
 const requiredFields = ["title", "author", "book_url", "price", "reason", "department", "grade", "category", "contact_email"] as const;
 
@@ -10,24 +11,39 @@ export async function POST(request: Request) {
   if (String(body.reason).length < 40 || String(body.reason).length > 300) return Response.json({ error: "読みたい理由は40〜300字で入力してください。" }, { status: 400 });
   if (!/^https?:\/\//.test(String(body.book_url))) return Response.json({ error: "正しい書籍ページURLを入力してください。" }, { status: 400 });
 
+  let isbn: string | null;
+  try {
+    isbn = toIsbn13(String(body.isbn ?? ""));
+  } catch (error) {
+    if (error instanceof InvalidIsbnError) {
+      return Response.json({ error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
+
+  const payload = {
+    title: String(body.title).trim(),
+    author: String(body.author).trim(),
+    isbn,
+    book_url: String(body.book_url).trim(),
+    price: Number(body.price),
+    reason: String(body.reason).trim(),
+    department: String(body.department),
+    grade: String(body.grade),
+    category: String(body.category),
+    contact_email: String(body.contact_email).trim().toLowerCase(),
+    status: "approved" as const,
+    admin_note: null,
+  };
+
   if (isDemoMode()) {
-    addDemoRequest({
-      title: String(body.title).trim(), author: String(body.author).trim(), isbn: String(body.isbn || "").trim() || null,
-      book_url: String(body.book_url).trim(), price: Number(body.price), reason: String(body.reason).trim(),
-      department: String(body.department), grade: String(body.grade), category: String(body.category),
-      contact_email: String(body.contact_email).trim().toLowerCase(), status: "approved", admin_note: null,
-    });
+    addDemoRequest(payload);
     return Response.json({ message: "申請を公開しました。公開ページを更新すると確認できます。" }, { status: 201 });
   }
 
   const client = createAdminClient();
   if (!client) return Response.json({ error: "保存先が設定されていません。" }, { status: 503 });
-  const { error } = await client.from("book_requests").insert({
-    title: String(body.title).trim(), author: String(body.author).trim(), isbn: String(body.isbn || "").trim() || null,
-    book_url: String(body.book_url).trim(), price: Number(body.price), reason: String(body.reason).trim(),
-    department: String(body.department), grade: String(body.grade), category: String(body.category),
-    contact_email: String(body.contact_email).trim().toLowerCase(), status: "approved",
-  });
+  const { error } = await client.from("book_requests").insert(payload);
   if (error) return Response.json({ error: "申請を保存できませんでした。" }, { status: 500 });
   return Response.json({ message: "申請を公開しました。支援状況は公開ページで確認できます。" }, { status: 201 });
 }

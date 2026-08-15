@@ -10,7 +10,7 @@ create table if not exists public.book_requests (
   id uuid primary key default gen_random_uuid(),
   title text not null check (char_length(title) between 1 and 160),
   author text not null check (char_length(author) between 1 and 100),
-  isbn text,
+  isbn text, -- ISBN-13 digits only; the API normalizes ISBN-10 on save
   book_url text not null check (book_url ~ '^https?://'),
   price integer not null check (price between 1 and 50000),
   reason text not null check (char_length(reason) between 40 and 300),
@@ -37,6 +37,14 @@ create policy "Public can read approved requests"
   on public.book_requests for select
   to anon, authenticated
   using (status in ('approved', 'fulfilled'));
+
+-- Anon/authenticated keys must not read contact_email or admin_note.
+-- The service-role key still has full access for the admin API.
+revoke all on public.book_requests from anon, authenticated;
+grant select (
+  id, title, author, isbn, book_url, price, reason,
+  department, grade, category, status, created_at, updated_at
+) on public.book_requests to anon, authenticated;
 
 -- New applications and all administration go through the server-side API.
 -- The service-role key bypasses RLS and must never be exposed to the browser.

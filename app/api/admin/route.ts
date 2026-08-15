@@ -1,10 +1,24 @@
+import { timingSafeEqual } from "node:crypto";
 import { getDemoRequests, updateDemoRequest } from "../../../lib/demo-store";
 import { createAdminClient, isDemoMode } from "../../../lib/supabase";
 import type { RequestStatus } from "../../../lib/types";
 
+function keysMatch(provided: string, expected: string) {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
+
 function authorized(request: Request) {
-  const expected = process.env.ADMIN_ACCESS_KEY || "demo-admin";
-  return request.headers.get("x-admin-key") === expected;
+  const provided = request.headers.get("x-admin-key");
+  if (!provided) return false;
+  if (isDemoMode()) {
+    return keysMatch(provided, process.env.ADMIN_ACCESS_KEY || "demo-admin");
+  }
+  const expected = process.env.ADMIN_ACCESS_KEY;
+  if (!expected) return false;
+  return keysMatch(provided, expected);
 }
 
 export async function GET(request: Request) {

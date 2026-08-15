@@ -1,10 +1,31 @@
 import { getDemoRequests } from "./demo-store";
 import { createPublicClient } from "./supabase";
-import type { BookRequest } from "./types";
+import { type BookRequest, type PublicBookRequest } from "./types";
 
-export async function getPublicRequests(): Promise<BookRequest[]> {
+export function toPublicRequest(request: BookRequest): PublicBookRequest {
+  return {
+    id: request.id,
+    title: request.title,
+    author: request.author,
+    isbn: request.isbn,
+    book_url: request.book_url,
+    price: request.price,
+    reason: request.reason,
+    department: request.department,
+    grade: request.grade,
+    category: request.category,
+    status: request.status,
+    created_at: request.created_at,
+  };
+}
+
+export async function getPublicRequests(): Promise<PublicBookRequest[]> {
   const client = createPublicClient();
-  if (!client) return getDemoRequests().filter((request) => request.status === "approved" || request.status === "fulfilled");
+  if (!client) {
+    return getDemoRequests()
+      .filter((request) => request.status === "approved" || request.status === "fulfilled")
+      .map(toPublicRequest);
+  }
 
   const { data, error } = await client
     .from("book_requests")
@@ -16,5 +37,5 @@ export async function getPublicRequests(): Promise<BookRequest[]> {
     console.error("Failed to load public requests", error.message);
     return [];
   }
-  return (data ?? []) as BookRequest[];
+  return (data ?? []).map(toPublicRequest);
 }

@@ -38,7 +38,7 @@ export default function RequestPage() {
           <section><div className="form-section-title"><b>1</b><div><h2>本について</h2><p>書店や出版社のページを確認しながら入力してください。</p></div></div><div className="field-grid">
             <label className="field full"><span>書籍名 <em>必須</em></span><input name="title" required maxLength={160} placeholder="例：CPUの創りかた" /></label>
             <label className="field"><span>著者名 <em>必須</em></span><input name="author" required maxLength={100} placeholder="例：渡波 郁" /></label>
-            <label className="field"><span>ISBN</span><input name="isbn" inputMode="numeric" maxLength={17} placeholder="978-4-..." /></label>
+            <label className="field"><span>ISBN</span><input name="isbn" inputMode="numeric" maxLength={17} placeholder="978-4-..." /><small>ISBN-10でも入力できます。保存時にISBN-13へ変換します。</small></label>
             <label className="field full"><span>書籍ページURL <em>必須</em></span><input name="book_url" type="url" required placeholder="https://..." /></label>
             <label className="field"><span>税込価格（円） <em>必須</em></span><input name="price" type="number" required min="1" max="50000" placeholder="3080" /></label>
             <label className="field"><span>分野 <em>必須</em></span><select name="category" required defaultValue=""><option value="" disabled>選択してください</option><option>コンピュータ</option><option>プログラミング</option><option>AI・データ</option><option>電子工学</option><option>機械工学</option><option>環境・化学</option><option>数学・自然科学</option><option>語学・教養</option><option>その他</option></select></label>

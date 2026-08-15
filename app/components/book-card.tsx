@@ -1,6 +1,6 @@
-import type { BookRequest } from "../../lib/types";
+import type { PublicBookRequest } from "../../lib/types";
 
-export function BookCard({ request }: { request: BookRequest }) {
+export function BookCard({ request }: { request: PublicBookRequest }) {
   const isFulfilled = request.status === "fulfilled";
 
   return (
