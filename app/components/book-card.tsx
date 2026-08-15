@@ -14,7 +14,6 @@ export function BookCard({ request }: { request: BookRequest }) {
         </div>
         <h3>{request.title}</h3>
         <p className="author">{request.author}</p>
-        <p className="reason">{request.reason}</p>
         <div className="card-footer">
           <strong>¥{request.price.toLocaleString("ja-JP")}</strong>
           {isFulfilled ? (
