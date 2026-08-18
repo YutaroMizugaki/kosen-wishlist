@@ -15,6 +15,8 @@ button, input, select, textarea { font: inherit; }
 .shell { width: min(860px, calc(100% - 32px)); margin-inline: auto; }
 .narrow { width: min(860px, calc(100% - 32px)); }
 
+.demo-banner { padding: 8px 16px; background: #fff4d6; color: #6b4e00; border-bottom: 1px solid #e6c869; font-size: 13px; text-align: center; }
+
 .site-header { border-bottom: 1px solid var(--line); background: var(--white); }
 .header-inner { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { color: var(--ink); font-size: 14px; font-weight: 700; letter-spacing: .08em; text-decoration: none; }
