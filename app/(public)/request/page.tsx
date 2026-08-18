@@ -4,7 +4,7 @@ import { FormEvent, KeyboardEvent, useState } from "react";
 import { CATEGORIES, DEFAULT_CATEGORY, DEPARTMENTS, GRADES } from "../../../lib/constants";
 
 type FormState = "idle" | "submitting" | "success" | "error";
-type LookupState = "idle" | "loading" | "success" | "error" | "existing";
+type LookupState = "idle" | "loading" | "success" | "error" | "existing" | "manual";
 type BookFields = { title: string; author: string; book_url: string; price: string; category: string };
 type ExistingRequest = {
   status: "approved" | "fulfilled" | "registered";
@@ -54,6 +54,13 @@ export default function RequestPage() {
     }
   }
 
+  function enterManually() {
+    setExisting(null);
+    setBook(emptyBook);
+    setLookupState("manual");
+    setLookupMessage("書籍情報を手入力してください。ISBNは正しい値を入力してください。");
+  }
+
   function handleIsbnChange(value: string) {
     setIsbn(value);
     if (lookupState !== "idle") {
@@ -95,7 +102,7 @@ export default function RequestPage() {
     }
   }
 
-  const showBookFields = lookupState === "success" || lookupState === "error";
+  const showBookFields = lookupState === "success" || lookupState === "error" || lookupState === "manual";
 
   return (
     <main className="subpage">
@@ -110,6 +117,7 @@ export default function RequestPage() {
               <label className="field"><span>ISBN <em>必須</em></span><input name="isbn" value={isbn} onChange={(event) => handleIsbnChange(event.target.value)} onKeyDown={handleIsbnKeyDown} inputMode="text" autoComplete="off" maxLength={17} required placeholder="ISBN-10 または ISBN-13" /></label>
               <button className="button lookup-button" type="button" onClick={() => void lookupBook()} disabled={lookupState === "loading"}>{lookupState === "loading" ? "取得中…" : "書籍情報を取得"}</button>
             </div>
+            {!showBookFields && lookupState !== "existing" && <p className="manual-entry"><button type="button" className="link-button" onClick={enterManually}>取得できない本は手入力で申請する</button></p>}
             {lookupMessage && <p className={`lookup-message ${lookupState}`} role="status">{lookupMessage}</p>}
             {lookupState === "existing" && existing && existing.status !== "registered" && <article className="existing-request">
               <span className="status">{existing.status === "fulfilled" ? "支援済み" : "募集中"}</span>
