@@ -1,6 +1,7 @@
 import { CATEGORIES, DEPARTMENTS, GRADES } from "../../../lib/constants";
 import { addDemoRequest, getDemoRequests } from "../../../lib/demo-store";
 import { isValidIsbn, normalizeIsbn, toIsbn13 } from "../../../lib/isbn";
+import { getInitialStatus, isEmailDomainAllowed, isReviewMode } from "../../../lib/submission";
 import { createAdminClient, isDemoMode } from "../../../lib/supabase";
 
 const departments: readonly string[] = DEPARTMENTS;
@@ -31,6 +32,10 @@ export async function POST(request: Request) {
   if (!Number.isInteger(price) || price < 1 || price > 50_000) return Response.json({ error: "価格を確認してください。" }, { status: 400 });
   if (!departments.includes(department) || !grades.includes(grade) || !categories.includes(category)) return Response.json({ error: "所属または分野を確認してください。" }, { status: 400 });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail) || contactEmail.length > 254) return Response.json({ error: "メールアドレスを確認してください。" }, { status: 400 });
+  if (!isEmailDomainAllowed(contactEmail)) return Response.json({ error: "指定されたメールドメインからのみ申請できます。" }, { status: 403 });
+
+  const initialStatus = getInitialStatus();
+  const successMessage = isReviewMode() ? "申請を受け付けました。運営の確認後に公開されます。" : "申請を公開しました。";
 
   const configuredLimit = Number(process.env.MAX_SUBMISSIONS_PER_DAY);
   const maxPerDay = Number.isFinite(configuredLimit)
@@ -43,8 +48,8 @@ export async function POST(request: Request) {
     if (items.filter((item) => item.contact_email === contactEmail && item.created_at >= since).length >= maxPerDay) return Response.json({ error: `投稿は24時間に${maxPerDay}件までです。` }, { status: 429 });
     const duplicate = items.some((item) => item.status !== "rejected" && normalizeIsbn(item.isbn) === isbn);
     if (duplicate) return Response.json({ error: "この本はすでに掲載されています。" }, { status: 409 });
-    addDemoRequest({ title, author, isbn, book_url: bookUrl, price, department, grade, category, contact_email: contactEmail, status: "approved", admin_note: null });
-    return Response.json({ message: "申請を公開しました。" }, { status: 201 });
+    addDemoRequest({ title, author, isbn, book_url: bookUrl, price, department, grade, category, contact_email: contactEmail, status: initialStatus, admin_note: null });
+    return Response.json({ message: successMessage }, { status: 201 });
   }
 
   const client = createAdminClient();
@@ -63,8 +68,8 @@ export async function POST(request: Request) {
   if (duplicateError) return Response.json({ error: "重複を確認できませんでした。" }, { status: 503 });
   if (duplicate?.length) return Response.json({ error: "この本はすでに掲載されています。" }, { status: 409 });
 
-  const { error } = await client.from("book_requests").insert({ title, author, isbn, book_url: bookUrl, price, department, grade, category, contact_email: contactEmail, status: "approved" });
+  const { error } = await client.from("book_requests").insert({ title, author, isbn, book_url: bookUrl, price, department, grade, category, contact_email: contactEmail, status: initialStatus });
   if (error?.code === "23505") return Response.json({ error: "この本はすでに掲載されています。" }, { status: 409 });
   if (error) return Response.json({ error: "申請を保存できませんでした。" }, { status: 500 });
-  return Response.json({ message: "申請を公開しました。" }, { status: 201 });
+  return Response.json({ message: successMessage }, { status: 201 });
 }
