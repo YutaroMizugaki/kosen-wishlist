@@ -1,10 +1,11 @@
+import { CATEGORIES, DEPARTMENTS, GRADES } from "../../../lib/constants";
 import { addDemoRequest, getDemoRequests } from "../../../lib/demo-store";
 import { isValidIsbn, normalizeIsbn, toIsbn13 } from "../../../lib/isbn";
 import { createAdminClient, isDemoMode } from "../../../lib/supabase";
 
-const departments = ["機械工学科", "電気電子工学科", "電子制御工学科", "情報工学科", "環境都市工学科", "専攻科"];
-const grades = ["1年", "2年", "3年", "4年", "5年", "専攻科"];
-const categories = ["コンピュータ", "プログラミング", "AI・データ", "電子工学", "機械工学", "環境・化学", "数学・自然科学", "語学・教養", "その他"];
+const departments: readonly string[] = DEPARTMENTS;
+const grades: readonly string[] = GRADES;
+const categories: readonly string[] = CATEGORIES;
 
 export async function POST(request: Request) {
   if (Number(request.headers.get("content-length") || 0) > 20_000) return Response.json({ error: "送信内容が大きすぎます。" }, { status: 413 });
